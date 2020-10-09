@@ -27,7 +27,7 @@ class ColorChange extends StatefulWidget {
 
 class _ColorChangeState extends State<ColorChange> {
   Color currColor;
-  int currColorValue;
+  String currColorName;
   final _random = new Random();
 
   @override
@@ -37,29 +37,92 @@ class _ColorChangeState extends State<ColorChange> {
     currColor = Colors.transparent;
   }
 
-  @override
+
+@override
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: currColor,
-      body: Column(
-        children: <Widget>[
-          Text('${currColor.hashCode}'),
-          Center(
-            child: Text('Tap on me'),
-          ),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => setState(() {
-                print('tapped');
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 20,
+              width: double.infinity,
+              child: Text('$currColorName'),
+            ),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                child: Center(
+                  child: Text(
+                    'Tap on me',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 30),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              width: double.infinity,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => setState(() {
+                    print('tapped');
 
-                currColor = COLOR_LIST[_random.nextInt(COLOR_LIST.length)];
-                // currColorValue = currColor.value;
-              }),
-
-          ),
-        ],
+                    List<String> colorNames = COLOR_MAP.keys.toList();
+                    currColorName = colorNames[_random.nextInt(colorNames.length)];
+                    currColor = COLOR_MAP[currColorName];
+                  }),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+
+
+
+
+
+
+
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return new Scaffold(
+  //     backgroundColor: currColor,
+  //     body: Column(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       crossAxisAlignment: CrossAxisAlignment.stretch,
+  //       children: <Widget>[
+  //         Container(
+  //           child: Align(
+  //             alignment: Alignment.topLeft,
+  //             child: Text('$currColorName'),
+  //           ),
+  //         ),
+  //         Center(
+  //           child: Text(
+  //             'Tap on me',
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(height: 5, fontSize: 30),
+  //           ),
+  //         ),
+  //         GestureDetector(
+  //           behavior: HitTestBehavior.opaque,
+  //           onTap: () => setState(() {
+  //               print('tapped');
+
+  //               List<String> colorNames = COLOR_MAP.keys.toList();
+  //               currColorName = colorNames[_random.nextInt(colorNames.length)];
+  //               currColor = COLOR_MAP[currColorName];
+  //             }),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
