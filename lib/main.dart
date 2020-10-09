@@ -43,86 +43,41 @@ class _ColorChangeState extends State<ColorChange> {
     return new Scaffold(
       backgroundColor: currColor,
       body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: 20,
-              width: double.infinity,
-              child: Text('$currColorName'),
-            ),
-            Expanded(
-              child: Container(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => setState(() {
+              print('tapped');
+
+              List<String> colorNames = COLOR_MAP.keys.toList();
+              currColorName = colorNames[_random.nextInt(colorNames.length)];
+              currColor = COLOR_MAP[currColorName];
+            }),
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 20,
                 width: double.infinity,
-                child: Center(
-                  child: Text(
-                    'Tap on me',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 30),
+                child: Text('$currColorName'),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 30.0),
+                  child: Container(
+                    width: double.infinity,
+                    child: Center(
+                      child: Text(
+                        'Tap on me',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 30),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              width: double.infinity,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => setState(() {
-                    print('tapped');
-
-                    List<String> colorNames = COLOR_MAP.keys.toList();
-                    currColorName = colorNames[_random.nextInt(colorNames.length)];
-                    currColor = COLOR_MAP[currColorName];
-                  }),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
-
-
-
-
-
-
-
-
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return new Scaffold(
-  //     backgroundColor: currColor,
-  //     body: Column(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       crossAxisAlignment: CrossAxisAlignment.stretch,
-  //       children: <Widget>[
-  //         Container(
-  //           child: Align(
-  //             alignment: Alignment.topLeft,
-  //             child: Text('$currColorName'),
-  //           ),
-  //         ),
-  //         Center(
-  //           child: Text(
-  //             'Tap on me',
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(height: 5, fontSize: 30),
-  //           ),
-  //         ),
-  //         GestureDetector(
-  //           behavior: HitTestBehavior.opaque,
-  //           onTap: () => setState(() {
-  //               print('tapped');
-
-  //               List<String> colorNames = COLOR_MAP.keys.toList();
-  //               currColorName = colorNames[_random.nextInt(colorNames.length)];
-  //               currColor = COLOR_MAP[currColorName];
-  //             }),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
-
