@@ -28,53 +28,95 @@ class ColorChange extends StatefulWidget {
 class _ColorChangeState extends State<ColorChange> {
   Color currColor;
   String currColorName;
+  TextAlign nameAlignment; // 'left' or 'right'
+  bool isNameOnTop;
   final _random = new Random();
 
   @override
   void initState() {
     super.initState();
 
+    isNameOnTop = true;
+    nameAlignment = TextAlign.left;
     currColor = Colors.transparent;
   }
 
 
-@override
+  Container getColorNameCont(String colorName, TextAlign alignm) {
+    return Container(
+              height: 30,
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+                child: Text(
+                  'pull to the corner $colorName',
+                  textAlign: alignm,
+                ),
+              ),
+            );
+  }
+
+  Expanded getMainExpanded() {
+    return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom:40.0),
+                child: Container(
+                  child: Center(
+                    child: Text(
+                      'Tap on me',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 40),
+                    ),
+                  ),
+                ),
+              ),
+            );
+  }
+
+  List<Widget> getWidgetList(isNameOnTop) {
+    Expanded mainExpanded = getMainExpanded();
+    Container colorNameCont = getColorNameCont(currColorName, nameAlignment);
+    if (isNameOnTop != true) {
+      return <Widget>[colorNameCont, mainExpanded];
+    } else {
+      return <Widget>[mainExpanded, colorNameCont];
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: currColor,
       body: SafeArea(
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
+          onPanUpdate: (details) => setState(() {
+            double dx = details.delta.dx;
+            double dy = details.delta.dy;
+            if ((dx > 0) & (dy > 0)) {
+              nameAlignment = TextAlign.right;
+              isNameOnTop = true;
+            } else if ((dx > 0) & (dy < 0)) {
+              nameAlignment = TextAlign.right;
+              isNameOnTop = false;
+            } else if ((dx < 0) & (dy > 0)) {
+              nameAlignment = TextAlign.left;
+              isNameOnTop = true;
+            } else if ((dx < 0) & (dy < 0)) {
+              nameAlignment = TextAlign.left;
+              isNameOnTop = false;
+            }
+          }),
           onTap: () => setState(() {
-              print('tapped');
+            print('tapped');
 
-              List<String> colorNames = COLOR_MAP.keys.toList();
-              currColorName = colorNames[_random.nextInt(colorNames.length)];
-              currColor = COLOR_MAP[currColorName];
-            }),
+            List<String> colorNames = COLOR_MAP.keys.toList();
+            currColorName = colorNames[_random.nextInt(colorNames.length)];
+            currColor = COLOR_MAP[currColorName];
+          }),
           child: Column(
-            children: <Widget>[
-              Container(
-                height: 20,
-                width: double.infinity,
-                child: Text('$currColorName'),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 30.0),
-                  child: Container(
-                    width: double.infinity,
-                    child: Center(
-                      child: Text(
-                        'Tap on me',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 30),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            children: getWidgetList(isNameOnTop),
           ),
         ),
       ),
