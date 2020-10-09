@@ -28,7 +28,7 @@ class ColorChange extends StatefulWidget {
 class _ColorChangeState extends State<ColorChange> {
   Color currColor;
   String currColorName;
-  TextAlign nameAlignment; // 'left' or 'right'
+  TextAlign nameAlignment; // TextAlign.left or TextAlign.right
   bool isNameOnTop;
   final _random = new Random();
 
@@ -38,7 +38,8 @@ class _ColorChangeState extends State<ColorChange> {
 
     isNameOnTop = true;
     nameAlignment = TextAlign.left;
-    currColor = Colors.transparent;
+    currColor = Colors.white;
+    currColorName = 'white';
   }
 
 
@@ -73,6 +74,7 @@ class _ColorChangeState extends State<ColorChange> {
             );
   }
 
+  // too poorly, I know :)
   List<Widget> getWidgetList(isNameOnTop) {
     Expanded mainExpanded = getMainExpanded();
     Container colorNameCont = getColorNameCont(currColorName, nameAlignment);
@@ -83,7 +85,6 @@ class _ColorChangeState extends State<ColorChange> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -92,6 +93,8 @@ class _ColorChangeState extends State<ColorChange> {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onPanUpdate: (details) => setState(() {
+            print('swapped');
+
             double dx = details.delta.dx;
             double dy = details.delta.dy;
             if ((dx > 0) & (dy > 0)) {
