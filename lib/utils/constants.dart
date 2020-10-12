@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-//colors.dart
+//colors.dart from documentation
 /// The material design primary color swatches, excluding grey.
 const Map<String, MaterialColor> COLOR_MAP = <String, MaterialColor>{
   'red': Colors.red,
