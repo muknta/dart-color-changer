@@ -51,9 +51,11 @@ Future<dynamic> getColorInfo() async {
   final int b = prefs.getInt('b');
   final double opacity = prefs.getDouble('opacity');
   List<dynamic> colorInfo = [r, g, b, opacity];
+  print('future 11111111111111111111');
   if (colorInfo.any((info) => info == null)) {
     return [255,255,255,1.00];
   }
+  print('future 22222222222222222222');
   return colorInfo;
 }
 
@@ -83,8 +85,8 @@ class _ColorChangeState extends State<ColorChange> {
   @override
   void initState() {
     super.initState();
-
-    // List<dynamic> colorInfo;
+    print('initState 11111111111');
+    List<dynamic> colorInfo;
     isNameOnTop = true;
     nameAlignment = TextAlign.left;
     /// first version
@@ -92,25 +94,33 @@ class _ColorChangeState extends State<ColorChange> {
     // currColorName = 'white';
     /// second version
     // List<dynamic> colorInfo = await getColorInfo(); // ?? [255,255,255,1.00];
-    List<dynamic> colorInfo = [255,255,255,1.00];
+    // List<dynamic> colorInfo = [255,255,255,1.00];
 
     // getColorInfo.whenComplete((result) {
     //   setState(() {colorInfo = result;});
     // });
 
     // almost working ^^
-    // _asyncMethod() async {
-    //           colorInfo = await getColorInfo();
-    //       }
-    // WidgetsBinding.instance.addPostFrameCallback((_){
-    //         _asyncMethod();
-    //       });
+    _asyncMethod() async {
+            print('asdsdasdsadsadsd');
+
+            colorInfo = await getColorInfo() ?? [255,255,255,1.00];
+            print('colorInfo $colorInfo');
+            currColor = Color.fromRGBO(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
+            currColorName = 'RGBO($colorInfo)';
+            
+            print('RGBO($colorInfo)');
+          }
+    WidgetsBinding.instance.addPostFrameCallback((_){
+            _asyncMethod();
+          });
+    print('initState 2222222222222');
 
 
     // currColor = Color.fromRGBO(*colorInfo);
-    currColor = Color.fromRGBO(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
-    currColorName = 'RGBO($colorInfo)';
+    
   }
+
 
   Container getColorNameCont(String colorName, TextAlign alignm) {
     return Container(
@@ -156,6 +166,8 @@ class _ColorChangeState extends State<ColorChange> {
 
   @override
   Widget build(BuildContext context) {
+
+    print('build 333333333333');
     return new Scaffold(
       backgroundColor: currColor,
       body: SafeArea(
