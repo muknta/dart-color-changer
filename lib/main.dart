@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-/// first version
-import 'utils/constants.dart';
-/// second version
 import 'package:shared_preferences/shared_preferences.dart';
 
-/*
-* first version
-* with predefined map of colors in 'constants.dart'
-* 
-* second version
-* with fully random colors by RGBO scheme
-* and via shared_preferences
-*/
 
 void main() => runApp(TestApp());
 
@@ -29,7 +18,6 @@ class TestApp extends StatelessWidget {
   }
 }
 
-/// second version part-realisation start
 class ColorChange extends StatefulWidget {
   @override
   _ColorChangeState createState() => _ColorChangeState();
@@ -51,11 +39,10 @@ Future<dynamic> getColorInfo() async {
   final int b = prefs.getInt('b');
   final double opacity = prefs.getDouble('opacity');
   List<dynamic> colorInfo = [r, g, b, opacity];
-  print('future 11111111111111111111');
+
   if (colorInfo.any((info) => info == null)) {
     return [255,255,255,1.00];
   }
-  print('future 22222222222222222222');
   return colorInfo;
 }
 
@@ -67,11 +54,10 @@ List<dynamic> getRandRGBO() {
   final int b = _random.nextInt(rgbConst);
   final double opacity = _random.nextDouble()*(1.0-0.25) + 0.25;
   List<dynamic> colorInfo = [r, g, b, double.parse(opacity.toStringAsFixed(2))];
-  // saveColor(*colorInfo);
+  
   saveColor(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
   return colorInfo;
 }
-/// second version part-realisation end
 
 
 class _ColorChangeState extends State<ColorChange> {
@@ -79,46 +65,24 @@ class _ColorChangeState extends State<ColorChange> {
   String currColorName;
   TextAlign nameAlignment; // TextAlign.left or TextAlign.right
   bool isNameOnTop;
-  /// for first version
-  // final _random = new Random();
 
   @override
   void initState() {
     super.initState();
-    print('initState 11111111111');
     List<dynamic> colorInfo;
     isNameOnTop = true;
     nameAlignment = TextAlign.left;
-    /// first version
-    // currColor = Colors.white;
-    // currColorName = 'white';
-    /// second version
-    // List<dynamic> colorInfo = await getColorInfo(); // ?? [255,255,255,1.00];
-    // List<dynamic> colorInfo = [255,255,255,1.00];
 
-    // getColorInfo.whenComplete((result) {
-    //   setState(() {colorInfo = result;});
-    // });
-
-    // almost working ^^
     _asyncMethod() async {
-            print('asdsdasdsadsadsd');
-
-            colorInfo = await getColorInfo() ?? [255,255,255,1.00];
-            print('colorInfo $colorInfo');
-            currColor = Color.fromRGBO(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
-            currColorName = 'RGBO($colorInfo)';
-            
-            print('RGBO($colorInfo)');
-          }
+      colorInfo = await getColorInfo() ?? [255,255,255,1.00];
+      currColor = Color.fromRGBO(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
+      currColorName = 'RGBO($colorInfo)';
+      
+      setState(() {});
+    }
     WidgetsBinding.instance.addPostFrameCallback((_){
-            _asyncMethod();
-          });
-    print('initState 2222222222222');
-
-
-    // currColor = Color.fromRGBO(*colorInfo);
-    
+      _asyncMethod();
+    });
   }
 
 
@@ -166,8 +130,6 @@ class _ColorChangeState extends State<ColorChange> {
 
   @override
   Widget build(BuildContext context) {
-
-    print('build 333333333333');
     return new Scaffold(
       backgroundColor: currColor,
       body: SafeArea(
@@ -195,13 +157,7 @@ class _ColorChangeState extends State<ColorChange> {
           onTap: () => setState(() {
             print('tapped');
 
-            /// first version
-            // List<String> colorNames = COLOR_MAP.keys.toList();
-            // currColorName = colorNames[_random.nextInt(colorNames.length)];
-            // currColor = COLOR_MAP[currColorName];
-            /// second version
             List<dynamic> colorInfo = getRandRGBO();
-            // currColor = Color.fromRGBO(*colorInfo);
             currColor = Color.fromRGBO(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
             currColorName = 'RGBO($colorInfo)';
           }),
