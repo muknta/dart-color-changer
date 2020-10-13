@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+
+final rgbConst = 256;
+final initColor = [255,255,255,1.00];
 //colors.dart from documentation
 /// The material design primary color swatches, excluding grey.
-const Map<String, MaterialColor> COLOR_MAP = <String, MaterialColor>{
+final Map<String, MaterialColor> colorMap = <String, MaterialColor>{
   'red': Colors.red,
   'pink': Colors.pink,
   'purple': Colors.purple,
@@ -25,3 +28,4 @@ const Map<String, MaterialColor> COLOR_MAP = <String, MaterialColor>{
   // makes the app look disabled.
   'blueGrey': Colors.blueGrey,
 };
+

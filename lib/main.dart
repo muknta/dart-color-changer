@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'utils/constants.dart';
 
 
 void main() => runApp(TestApp());
@@ -41,20 +42,19 @@ Future<dynamic> getColorInfo() async {
   List<dynamic> colorInfo = [r, g, b, opacity];
 
   if (colorInfo.any((info) => info == null)) {
-    return [255,255,255,1.00];
+    return initColor;
   }
   return colorInfo;
 }
 
 List<dynamic> getRandRGBO() {
-  const rgbConst = 256;
   final _random = new Random();
   final int r = _random.nextInt(rgbConst);
   final int g = _random.nextInt(rgbConst);
   final int b = _random.nextInt(rgbConst);
   final double opacity = _random.nextDouble()*(1.0-0.25) + 0.25;
   List<dynamic> colorInfo = [r, g, b, double.parse(opacity.toStringAsFixed(2))];
-  
+
   saveColor(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
   return colorInfo;
 }
@@ -69,20 +69,31 @@ class _ColorChangeState extends State<ColorChange> {
   @override
   void initState() {
     super.initState();
-    List<dynamic> colorInfo;
+
     isNameOnTop = true;
     nameAlignment = TextAlign.left;
+  }
 
-    _asyncMethod() async {
-      colorInfo = await getColorInfo() ?? [255,255,255,1.00];
-      currColor = Color.fromRGBO(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
-      currColorName = 'RGBO($colorInfo)';
-      
-      setState(() {});
+
+  void setColorVars(List<dynamic> colorInfo) {
+    currColor = Color.fromRGBO(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
+    currColorName = 'RGBO($colorInfo)';
+  }
+
+  void setAlignParams(double dx, double dy) {
+    if ((dx > 0) & (dy < 0)) {
+      nameAlignment = TextAlign.right;
+      isNameOnTop = true;
+    } else if ((dx > 0) & (dy > 0)) {
+      nameAlignment = TextAlign.right;
+      isNameOnTop = false;
+    } else if ((dx < 0) & (dy < 0)) {
+      nameAlignment = TextAlign.left;
+      isNameOnTop = true;
+    } else if ((dx < 0) & (dy > 0)) {
+      nameAlignment = TextAlign.left;
+      isNameOnTop = false;
     }
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      _asyncMethod();
-    });
   }
 
 
@@ -121,7 +132,7 @@ class _ColorChangeState extends State<ColorChange> {
   List<Widget> getWidgetList(isNameOnTop) {
     Expanded mainExpanded = getMainExpanded();
     Container colorNameCont = getColorNameCont(currColorName, nameAlignment);
-    if (isNameOnTop != true) {
+    if (isNameOnTop == true) {
       return <Widget>[colorNameCont, mainExpanded];
     } else {
       return <Widget>[mainExpanded, colorNameCont];
@@ -130,6 +141,17 @@ class _ColorChangeState extends State<ColorChange> {
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getColorInfo(),
+      initialData: initColor,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        List<dynamic> data = snapshot.hasData ? snapshot.data : initColor;
+        setColorVars(data);
+        return _buildWidget();
+    });
+  }
+
+  Widget _buildWidget() {
     return new Scaffold(
       backgroundColor: currColor,
       body: SafeArea(
@@ -138,21 +160,7 @@ class _ColorChangeState extends State<ColorChange> {
           onPanUpdate: (details) => setState(() {
             print('swapped');
 
-            double dx = details.delta.dx;
-            double dy = details.delta.dy;
-            if ((dx > 0) & (dy > 0)) {
-              nameAlignment = TextAlign.right;
-              isNameOnTop = true;
-            } else if ((dx > 0) & (dy < 0)) {
-              nameAlignment = TextAlign.right;
-              isNameOnTop = false;
-            } else if ((dx < 0) & (dy > 0)) {
-              nameAlignment = TextAlign.left;
-              isNameOnTop = true;
-            } else if ((dx < 0) & (dy < 0)) {
-              nameAlignment = TextAlign.left;
-              isNameOnTop = false;
-            }
+            setAlignParams(details.delta.dx, details.delta.dy);
           }),
           onTap: () => setState(() {
             print('tapped');
