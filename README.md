@@ -4,7 +4,7 @@
 ## What is it?
 A test task for Solid Software.
 
-App can change color by tapping and change text position by swapping.
+App can change color by tapping on the screen and change text position by swapping. Each tap color is remembered until next start of app.
 
 ## How can I push this umbelievable app?
 Firstly, get Flutter SDK - https://flutter.dev/docs/get-started/install
