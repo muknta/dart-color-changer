@@ -4,67 +4,50 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/constants.dart';
 
 
-void main() => runApp(TestApp());
+void main() async {
+  final prefs = await SharedPreferences.getInstance();
+  runApp(TestApp(prefs));
+}
 
 
 class TestApp extends StatelessWidget {
+  SharedPreferences prefs;
   final String _title = "it's colors you";
 
+  TestApp(SharedPreferences prefs) {
+    this.prefs = prefs;
+  }
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: _title,
-      home: ColorChange(),
+      home: ColorChange(prefs),
     );
   }
 }
 
 class ColorChange extends StatefulWidget {
-  @override
-  _ColorChangeState createState() => _ColorChangeState();
-}
+  SharedPreferences prefs;
 
-
-void saveColor(int r, int g, int b, double opacity) async {
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setInt('r', r);
-  prefs.setInt('g', g);
-  prefs.setInt('b', b);
-  prefs.setDouble('opacity', opacity);
-}
-
-Future<dynamic> getColorInfo() async {
-  final prefs = await SharedPreferences.getInstance();
-  final int r = prefs.getInt('r');
-  final int g = prefs.getInt('g');
-  final int b = prefs.getInt('b');
-  final double opacity = prefs.getDouble('opacity');
-  List<dynamic> colorInfo = [r, g, b, opacity];
-
-  if (colorInfo.any((info) => info == null)) {
-    return initColor;
+  ColorChange(SharedPreferences prefs) {
+    this.prefs = prefs;
   }
-  return colorInfo;
-}
-
-List<dynamic> getRandRGBO() {
-  final _random = new Random();
-  final int r = _random.nextInt(rgbConst);
-  final int g = _random.nextInt(rgbConst);
-  final int b = _random.nextInt(rgbConst);
-  final double opacity = _random.nextDouble()*(1.0-0.25) + 0.25;
-  List<dynamic> colorInfo = [r, g, b, double.parse(opacity.toStringAsFixed(2))];
-
-  saveColor(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
-  return colorInfo;
+  @override
+  _ColorChangeState createState() => _ColorChangeState(prefs);
 }
 
 
 class _ColorChangeState extends State<ColorChange> {
+  SharedPreferences prefs;
+  final _random = new Random();
   Color currColor;
   String currColorName;
   TextAlign nameAlignment; // TextAlign.left or TextAlign.right
   bool isNameOnTop;
+
+  _ColorChangeState(SharedPreferences prefs) {
+    this.prefs = prefs;
+  }
 
   @override
   void initState() {
@@ -74,6 +57,37 @@ class _ColorChangeState extends State<ColorChange> {
     nameAlignment = TextAlign.left;
   }
 
+
+  void saveColor(int r, int g, int b, double opacity) {
+    prefs.setInt('r', r);
+    prefs.setInt('g', g);
+    prefs.setInt('b', b);
+    prefs.setDouble('opacity', opacity);
+  }
+
+  Future<dynamic> getColorInfo() async {
+    final int r = prefs.getInt('r');
+    final int g = prefs.getInt('g');
+    final int b = prefs.getInt('b');
+    final double opacity = prefs.getDouble('opacity');
+    List<dynamic> colorInfo = [r, g, b, opacity];
+
+    if (colorInfo.any((info) => info == null)) {
+      return initColor;
+    }
+    return colorInfo;
+  }
+
+  List<dynamic> getRandRGBO() {
+    final int r = _random.nextInt(rgbConst);
+    final int g = _random.nextInt(rgbConst);
+    final int b = _random.nextInt(rgbConst);
+    final double opacity = _random.nextDouble()*(1.0-0.25) + 0.25;
+    List<dynamic> colorInfo = [r, g, b, double.parse(opacity.toStringAsFixed(2))];
+
+    saveColor(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
+    return colorInfo;
+  }
 
   void setColorVars(List<dynamic> colorInfo) {
     currColor = Color.fromRGBO(colorInfo[0],colorInfo[1],colorInfo[2],colorInfo[3]);
