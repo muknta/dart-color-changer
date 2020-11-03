@@ -15,5 +15,6 @@ Linux(Debian(Ubuntu)) example:
 If all is ok, then:
 ```code
 ~/$ cd dart-color-changer
+~/dart-color-changer/$ flutter devices 
 ~/dart-color-changer/$ flutter run
 ```
