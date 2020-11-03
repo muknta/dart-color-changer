@@ -5,6 +5,7 @@ import 'utils/constants.dart';
 
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   runApp(TestApp(prefs));
 }
